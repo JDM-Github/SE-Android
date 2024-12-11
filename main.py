@@ -229,11 +229,11 @@ class MainWidget(Widget):
                 self.subcategory_name = re.sub(r'^\d+\.\s*', '', data['subcategory'])
                 self.subcategory_star = star_percentages
 
-                self.number_star_1 = f'{data['stars'][0]}'
-                self.number_star_2 = f'{data['stars'][1]}'
-                self.number_star_3 = f'{data['stars'][2]}'
-                self.number_star_4 = f'{data['stars'][3]}'
-                self.number_star_5 = f'{data['stars'][4]}'
+                self.number_star_1 = f"{data['stars'][0]}"
+                self.number_star_2 = f"{data['stars'][1]}"
+                self.number_star_3 = f"{data['stars'][2]}"
+                self.number_star_4 = f"{data['stars'][3]}"
+                self.number_star_5 = f"{data['stars'][4]}"
 
                 stars = data['stars']
                 total_votes = sum(stars)
@@ -376,11 +376,11 @@ class MainWidget(Widget):
                 self.subcategory_name = re.sub(r'^\d+\.\s*', '', data['subcategory'])
                 self.subcategory_star = star_percentages
 
-                self.number_star_1 = f'{data['stars'][0]}'
-                self.number_star_2 = f'{data['stars'][1]}'
-                self.number_star_3 = f'{data['stars'][2]}'
-                self.number_star_4 = f'{data['stars'][3]}'
-                self.number_star_5 = f'{data['stars'][4]}'
+                self.number_star_1 = f"{data['stars'][0]}"
+                self.number_star_2 = f"{data['stars'][1]}"
+                self.number_star_3 = f"{data['stars'][2]}"
+                self.number_star_4 = f"{data['stars'][3]}"
+                self.number_star_5 = f"{data['stars'][4]}"
 
                 stars = data['stars']
                 total_votes = sum(stars)
