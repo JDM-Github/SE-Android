@@ -1,6 +1,6 @@
 # import csv
-import re
-from collections import defaultdict
+# import re
+# from collections import defaultdict
 
 # import joblib
 # from kivy.config import Config
@@ -23,13 +23,13 @@ from kivy.core.window import Window
 from kivymd.app import App
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.graphics import Color, Ellipse, RoundedRectangle
-# from kivy.clock import Clock
-from kivy.uix.popup import Popup
-# from kivymd.uix.filemanager import MDFileManager
-from kivy.animation import Animation
+# from kivy.uix.label import Label
+# from kivy.uix.button import Button
+# from kivy.graphics import Color, Ellipse, RoundedRectangle
+# # from kivy.clock import Clock
+# from kivy.uix.popup import Popup
+# # from kivymd.uix.filemanager import MDFileManager
+# from kivy.animation import Animation
 from kivy.properties import NumericProperty, StringProperty
 
 class MainWidget(Widget):
@@ -63,16 +63,16 @@ class MainWidget(Widget):
         self.current_index = 0
         self.sub_current_index = 0
 
-    def on_image_click(self):
-        self.open_file_manager()
+    # def on_image_click(self):
+    #     self.open_file_manager()
 
-    def open_file_manager(self):
-        # self.file_manager = MDFileManager(
-        #     exit_manager=self.exit_file_manager,
-        #     select_path=self.select_file,
-        # )
-        # self.file_manager.show('/')
-        pass
+    # def open_file_manager(self):
+    #     # self.file_manager = MDFileManager(
+    #     #     exit_manager=self.exit_file_manager,
+    #     #     select_path=self.select_file,
+    #     # )
+    #     # self.file_manager.show('/')
+    #     pass
 
     # def select_file(self, path):
     #     if path.endswith('.csv'):
@@ -86,33 +86,33 @@ class MainWidget(Widget):
     #     self.file_manager.close()
     
     
-    def simplify_text(self, text):
-        """Simplifies text by removing numbers, punctuation, and stopwords."""
-        return text.lower().replace(" ", "").strip()
+    # def simplify_text(self, text):
+    #     """Simplifies text by removing numbers, punctuation, and stopwords."""
+    #     return text.lower().replace(" ", "").strip()
 
-    def categorize_columns(self, header):
-        """Smart categorization of columns into categories."""
-        category_map = defaultdict(list)
-        current_category = None
+    # def categorize_columns(self, header):
+    #     """Smart categorization of columns into categories."""
+    #     category_map = defaultdict(list)
+    #     current_category = None
 
-        for col_name in header[4:]:
-            simplified_name = self.simplify_text(col_name)
+    #     for col_name in header[4:]:
+    #         simplified_name = self.simplify_text(col_name)
 
-            if any(keyword in simplified_name for keyword in ["coordination", "gathered", "activity"]):
-                current_category = "Coordination"
-            elif any(keyword in simplified_name for keyword in ["objectives", "goals"]):
-                current_category = "Objectives"
-            elif any(keyword in simplified_name for keyword in ["feedback", "comment", "suggestion"]):
-                current_category = "Feedback"
-            elif any(keyword in simplified_name for keyword in ["discussions", "participation", "inputs"]):
-                current_category = "Discussions"
-            elif any(keyword in simplified_name for keyword in ["accessibility", "convenience", "comfort"]):
-                current_category = "Accessibility"
-            else:
-                current_category = "Other" 
-            category_map[current_category].append(col_name)
+    #         if any(keyword in simplified_name for keyword in ["coordination", "gathered", "activity"]):
+    #             current_category = "Coordination"
+    #         elif any(keyword in simplified_name for keyword in ["objectives", "goals"]):
+    #             current_category = "Objectives"
+    #         elif any(keyword in simplified_name for keyword in ["feedback", "comment", "suggestion"]):
+    #             current_category = "Feedback"
+    #         elif any(keyword in simplified_name for keyword in ["discussions", "participation", "inputs"]):
+    #             current_category = "Discussions"
+    #         elif any(keyword in simplified_name for keyword in ["accessibility", "convenience", "comfort"]):
+    #             current_category = "Accessibility"
+    #         else:
+    #             current_category = "Other" 
+    #         category_map[current_category].append(col_name)
 
-        return category_map
+    #     return category_map
 
     # def process_csv_to_3d_list(self, csv_file):
     #     result = []
@@ -141,23 +141,23 @@ class MainWidget(Widget):
 
     #     return result
 
-    def aggregate_subcategories(self, subcategories):
-        """Group subcategories and aggregate stars."""
-        aggregated_data = defaultdict(lambda: [0, 0, 0, 0, 0]) 
+    # def aggregate_subcategories(self, subcategories):
+    #     """Group subcategories and aggregate stars."""
+    #     aggregated_data = defaultdict(lambda: [0, 0, 0, 0, 0]) 
 
-        for item in subcategories:
-            if not (item.get('stars') or not item.get('subcategory')):
-                return {"subcategory": "NUN", "stars": [0, 0, 0, 0, 0]}
+    #     for item in subcategories:
+    #         if not (item.get('stars') or not item.get('subcategory')):
+    #             return {"subcategory": "NUN", "stars": [0, 0, 0, 0, 0]}
 
-            subcategory = item['subcategory']
-            stars = item['stars']
-            aggregated_data[subcategory][stars - 1] += 1
+    #         subcategory = item['subcategory']
+    #         stars = item['stars']
+    #         aggregated_data[subcategory][stars - 1] += 1
 
-        result = [
-            {"subcategory": subcategory, "stars": counts}
-            for subcategory, counts in aggregated_data.items()
-        ]
-        return result
+    #     result = [
+    #         {"subcategory": subcategory, "stars": counts}
+    #         for subcategory, counts in aggregated_data.items()
+    #     ]
+    #     return result
 
     # def open_csv(self):
     #     if not self.full_comments_file:
@@ -298,163 +298,163 @@ class MainWidget(Widget):
 
     #     self.draw_pie_chart([self.negative_percent, self.neutral_percent, self.positive_percent])
 
-    def prev_subcategory(self):
-        if self.sub_current_index > 0:
-            self.sub_current_index -= 1
-        else:
-            if self.current_index > 0:
-                self.current_index -= 1
-                self.sub_current_index = 0
-            else:
-                print("Warning: No previous category.")
+    # def prev_subcategory(self):
+    #     if self.sub_current_index > 0:
+    #         self.sub_current_index -= 1
+    #     else:
+    #         if self.current_index > 0:
+    #             self.current_index -= 1
+    #             self.sub_current_index = 0
+    #         else:
+    #             print("Warning: No previous category.")
 
-        self.update_subcategory_data()
+    #     self.update_subcategory_data()
 
-    def next_subcategory(self):
-        if self.sub_current_index < len(self.sub_category_list) - 1:
-            self.sub_current_index += 1
-        else:
-            if self.current_index < len(self.structured_data) - 1:
-                self.current_index += 1
-                self.sub_current_index = 0
-            else:
-                print("Warning: No next category.")
-                return
+    # def next_subcategory(self):
+    #     if self.sub_current_index < len(self.sub_category_list) - 1:
+    #         self.sub_current_index += 1
+    #     else:
+    #         if self.current_index < len(self.structured_data) - 1:
+    #             self.current_index += 1
+    #             self.sub_current_index = 0
+    #         else:
+    #             print("Warning: No next category.")
+    #             return
 
-        self.update_subcategory_data()
+    #     self.update_subcategory_data()
 
-    def update_subcategory_data(self):
-        if self.structured_data and self.current_index < len(self.structured_data):
-            self.category_name = self.structured_data[self.current_index].get('category', 'Unknown Category')
+    # def update_subcategory_data(self):
+    #     if self.structured_data and self.current_index < len(self.structured_data):
+    #         self.category_name = self.structured_data[self.current_index].get('category', 'Unknown Category')
             
-            subcategories = self.structured_data[self.current_index].get('subcategories', [])
-            self.sub_category_list = self.aggregate_subcategories(subcategories)
+    #         subcategories = self.structured_data[self.current_index].get('subcategories', [])
+    #         self.sub_category_list = self.aggregate_subcategories(subcategories)
             
-            if self.sub_category_list and 0 <= self.sub_current_index < len(self.sub_category_list):
-                data = self.sub_category_list[self.sub_current_index]
-                total_votes = sum(data['stars'])
-                star_percentages = [(votes / total_votes) * 100 if total_votes > 0 else 0 for votes in data['stars']]
+    #         if self.sub_category_list and 0 <= self.sub_current_index < len(self.sub_category_list):
+    #             data = self.sub_category_list[self.sub_current_index]
+    #             total_votes = sum(data['stars'])
+    #             star_percentages = [(votes / total_votes) * 100 if total_votes > 0 else 0 for votes in data['stars']]
                 
-                self.subcategory_name = re.sub(r'^\d+\.\s*', '', data['subcategory'])
-                self.subcategory_star = star_percentages
+    #             self.subcategory_name = re.sub(r'^\d+\.\s*', '', data['subcategory'])
+    #             self.subcategory_star = star_percentages
 
-                self.number_star_1 = f"{data['stars'][0]}"
-                self.number_star_2 = f"{data['stars'][1]}"
-                self.number_star_3 = f"{data['stars'][2]}"
-                self.number_star_4 = f"{data['stars'][3]}"
-                self.number_star_5 = f"{data['stars'][4]}"
+    #             self.number_star_1 = f"{data['stars'][0]}"
+    #             self.number_star_2 = f"{data['stars'][1]}"
+    #             self.number_star_3 = f"{data['stars'][2]}"
+    #             self.number_star_4 = f"{data['stars'][3]}"
+    #             self.number_star_5 = f"{data['stars'][4]}"
 
-                stars = data['stars']
-                total_votes = sum(stars)
+    #             stars = data['stars']
+    #             total_votes = sum(stars)
 
-                if total_votes > 0:
-                    weighted_average = sum((i + 1) * stars[i] for i in range(5)) / total_votes
-                else:
-                    weighted_average = 0 
+    #             if total_votes > 0:
+    #                 weighted_average = sum((i + 1) * stars[i] for i in range(5)) / total_votes
+    #             else:
+    #                 weighted_average = 0 
 
-                if weighted_average >= 4.8:
-                    self.result_text = "Very Satisfactory"
-                    self.result_color = "#00FF00"
-                elif 3.5 <= weighted_average < 4.8:
-                    self.result_text = "Satisfactory"
-                    self.result_color = "#FFA500"
-                elif 2.5 <= weighted_average < 3.5:
-                    self.result_text = "Needs Improvement"
-                    self.result_color = "#FFCC00"
-                else:
-                    self.result_text = "Needs Enhancement"
-                    self.result_color = "#FF0000" 
+    #             if weighted_average >= 4.8:
+    #                 self.result_text = "Very Satisfactory"
+    #                 self.result_color = "#00FF00"
+    #             elif 3.5 <= weighted_average < 4.8:
+    #                 self.result_text = "Satisfactory"
+    #                 self.result_color = "#FFA500"
+    #             elif 2.5 <= weighted_average < 3.5:
+    #                 self.result_text = "Needs Improvement"
+    #                 self.result_color = "#FFCC00"
+    #             else:
+    #                 self.result_text = "Needs Enhancement"
+    #                 self.result_color = "#FF0000" 
 
-                colors = (237 / 255, 106 / 255, 110 / 255)
-                for i, percentage in enumerate(star_percentages):
-                    star_id = f"star_{i + 1}"
-                    if hasattr(self.ids, star_id):
-                        self.redraw_canvas(getattr(self.ids, star_id), colors, percentage)
-                    else:
-                        print(f"Warning: {star_id} does not exist in self.ids.")
-            else:
-                print("Warning: No subcategories available.")
-        else:
-            print("Warning: No data available in structured data.")
+    #             colors = (237 / 255, 106 / 255, 110 / 255)
+    #             for i, percentage in enumerate(star_percentages):
+    #                 star_id = f"star_{i + 1}"
+    #                 if hasattr(self.ids, star_id):
+    #                     self.redraw_canvas(getattr(self.ids, star_id), colors, percentage)
+    #                 else:
+    #                     print(f"Warning: {star_id} does not exist in self.ids.")
+    #         else:
+    #             print("Warning: No subcategories available.")
+    #     else:
+    #         print("Warning: No data available in structured data.")
     
-    # REDRAW THE BAR
-    def redraw_canvas(self, widget, color, percent):
-        widget.canvas.clear()
-        with widget.canvas.before:
-            Color(17/255,46/255,83/255)
-            RoundedRectangle(size=widget.size, pos=widget.pos)
+    # # REDRAW THE BAR
+    # def redraw_canvas(self, widget, color, percent):
+    #     widget.canvas.clear()
+    #     with widget.canvas.before:
+    #         Color(17/255,46/255,83/255)
+    #         RoundedRectangle(size=widget.size, pos=widget.pos)
 
-        def animate_rectangle(*args):
-            widget.canvas.clear()
-            with widget.canvas.before:
-                Color(17 / 255, 46 / 255, 83 / 255)
-                RoundedRectangle(size=widget.size, pos=widget.pos)
+    #     def animate_rectangle(*args):
+    #         widget.canvas.clear()
+    #         with widget.canvas.before:
+    #             Color(17 / 255, 46 / 255, 83 / 255)
+    #             RoundedRectangle(size=widget.size, pos=widget.pos)
 
-                Color(*color)
-                # Draw the rectangle with initial size 0
-                rect = RoundedRectangle(size=(0, widget.height), pos=widget.pos)
+    #             Color(*color)
+    #             # Draw the rectangle with initial size 0
+    #             rect = RoundedRectangle(size=(0, widget.height), pos=widget.pos)
 
-            # Create an animation to increase the size
-            anim = Animation(size=(widget.width / 100 * percent, widget.height), duration=0.5)
-            anim.start(rect)
-        animate_rectangle()
+    #         # Create an animation to increase the size
+    #         anim = Animation(size=(widget.width / 100 * percent, widget.height), duration=0.5)
+    #         anim.start(rect)
+    #     animate_rectangle()
 
 
-    def draw_pie_chart(self, data):
-        total = sum(data)
-        colors = [
-            (237 / 255, 106 / 255, 110 / 255),
-            (240 / 255, 137 / 255, 44 / 255), 
-            (134 / 255, 207 / 255, 111 / 255)]
+    # def draw_pie_chart(self, data):
+    #     total = sum(data)
+    #     colors = [
+    #         (237 / 255, 106 / 255, 110 / 255),
+    #         (240 / 255, 137 / 255, 44 / 255), 
+    #         (134 / 255, 207 / 255, 111 / 255)]
     
-        engagement = self.ids.engagement_pie
-        engagement.canvas.clear()
+    #     engagement = self.ids.engagement_pie
+    #     engagement.canvas.clear()
 
-        self.animate_pie(engagement, colors, 0, 0, data, total)
+    #     self.animate_pie(engagement, colors, 0, 0, data, total)
     
 
-    # ANIMATION OF PIE CHART BEING DRAWN
-    def animate_pie(self, engagement, colors, index, start_angle, data, total):
-        if (index > 2):
-            with engagement.canvas:
-                Color(9 / 255, 25 / 255, 47 / 255)
-                pie = Ellipse(
-                    pos=(
-                        (engagement.x + engagement.parent.width / 2 - 60 + engagement.width / 4) + engagement.width / 4,
-                        (engagement.y - 40 + engagement.height / 4) + engagement.height / 4),
-                    size=(1, 1)
-                )
-                Animation(size=(engagement.width / 2, engagement.height / 2),
-                    pos=((engagement.x + engagement.parent.width / 2 - 60 + engagement.width / 4),
-                        (engagement.y - 40 + engagement.height / 4)), duration=0.5).start(pie)
-            return
+    # # ANIMATION OF PIE CHART BEING DRAWN
+    # def animate_pie(self, engagement, colors, index, start_angle, data, total):
+    #     if (index > 2):
+    #         with engagement.canvas:
+    #             Color(9 / 255, 25 / 255, 47 / 255)
+    #             pie = Ellipse(
+    #                 pos=(
+    #                     (engagement.x + engagement.parent.width / 2 - 60 + engagement.width / 4) + engagement.width / 4,
+    #                     (engagement.y - 40 + engagement.height / 4) + engagement.height / 4),
+    #                 size=(1, 1)
+    #             )
+    #             Animation(size=(engagement.width / 2, engagement.height / 2),
+    #                 pos=((engagement.x + engagement.parent.width / 2 - 60 + engagement.width / 4),
+    #                     (engagement.y - 40 + engagement.height / 4)), duration=0.5).start(pie)
+    #         return
 
-        angle = 360 * (data[index] / total)
-        with engagement.canvas:
-            Color(*colors[index])
-            pie_segment = Ellipse(
-                pos=(engagement.x + engagement.parent.width / 2 - 60, engagement.y - 40),
-                size=engagement.size,
-                angle_start=start_angle,
-                angle_end=start_angle
-            )
-        animation = Animation(angle_end=start_angle + angle, duration=0.5)
-        start_angle += angle
+    #     angle = 360 * (data[index] / total)
+    #     with engagement.canvas:
+    #         Color(*colors[index])
+    #         pie_segment = Ellipse(
+    #             pos=(engagement.x + engagement.parent.width / 2 - 60, engagement.y - 40),
+    #             size=engagement.size,
+    #             angle_start=start_angle,
+    #             angle_end=start_angle
+    #         )
+    #     animation = Animation(angle_end=start_angle + angle, duration=0.5)
+    #     start_angle += angle
 
-        animation.bind(on_complete=lambda *_: self.animate_pie(engagement, colors, index+1, start_angle, data, total))
-        animation.start(pie_segment)
+    #     animation.bind(on_complete=lambda *_: self.animate_pie(engagement, colors, index+1, start_angle, data, total))
+    #     animation.start(pie_segment)
 
-    def show_error_popup(self, title, message):
-        content = Label(text=message, size_hint=(1, 0.8), font_size="28sp", bold=True)
-        close_button = Button(text="Close", size_hint=(1, 0.2), background_color=(9/255, 25/255, 47/255), bold=True)
-        close_button.bind(on_release=self.close_popup)
+    # def show_error_popup(self, title, message):
+    #     content = Label(text=message, size_hint=(1, 0.8), font_size="28sp", bold=True)
+    #     close_button = Button(text="Close", size_hint=(1, 0.2), background_color=(9/255, 25/255, 47/255), bold=True)
+    #     close_button.bind(on_release=self.close_popup)
         
-        self.popup = Popup(content=content, size_hint=(0.8, 0.3))
-        self.popup.content.add_widget(close_button)
-        self.popup.open()
+    #     self.popup = Popup(content=content, size_hint=(0.8, 0.3))
+    #     self.popup.content.add_widget(close_button)
+    #     self.popup.open()
 
-    def close_popup(self, instance):
-        self.popup.dismiss()
+    # def close_popup(self, instance):
+    #     self.popup.dismiss()
 
 
 class MainApp(App):
