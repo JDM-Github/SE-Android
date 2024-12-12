@@ -31,6 +31,10 @@ from kivy.uix.widget import Widget
 # # from kivymd.uix.filemanager import MDFileManager
 # from kivy.animation import Animation
 from kivy.properties import NumericProperty, StringProperty
+from kivy.lang import Builder
+
+# Load the KV file
+Builder.load_file('mainapp.kv')
 
 class MainWidget(Widget):
 
@@ -460,17 +464,17 @@ class MainWidget(Widget):
 class MainApp(App):
 
     def build(self):
-        Window.bind(on_drop_file=self._on_file_drop)
+        # Window.bind(on_drop_file=self._on_file_drop)
         self.main_widget = MainWidget()
         return self.main_widget
 
-    def _on_file_drop(self, window, file_path, *args):
-        decoded_path = file_path.decode('utf-8')
-        if decoded_path.endswith('.csv'):
-            self.main_widget.full_comments_file = decoded_path
-        else:
-            self.main_widget.show_error_popup("Invalid file type", "Please drop a .csv file.")
-        return
+    # def _on_file_drop(self, window, file_path, *args):
+    #     decoded_path = file_path.decode('utf-8')
+    #     if decoded_path.endswith('.csv'):
+    #         self.main_widget.full_comments_file = decoded_path
+    #     else:
+    #         self.main_widget.show_error_popup("Invalid file type", "Please drop a .csv file.")
+    #     return
 
 if __name__ == "__main__":
     MainApp().run()
