@@ -38,4 +38,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='path/to/your/icon.ico'  # Add your icon file path here
 )

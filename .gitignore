@@ -4,3 +4,4 @@ test.py
 build/
 dist/
 test/
+main.spec
