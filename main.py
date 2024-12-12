@@ -31,7 +31,6 @@ from kivymd.uix.filemanager import MDFileManager
 from kivy.animation import Animation
 from kivy.properties import NumericProperty, StringProperty
 
-import pandas as pd
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
@@ -39,24 +38,29 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
 
 class Model:
-
     def __init__(self):
+        reviews = []
+        sentiments = []
 
-        df = pd.read_csv('MovieReviewTrainingDatabase.csv')
-        df['review'] = df['review'].fillna('Unknown')
+        with open('MovieReviewTrainingDatabase.csv', mode='r', newline='', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                reviews.append(row['review'] if row['review'] else 'Unknown')
+                sentiments.append(row['sentiment'])
+
         self.vectorizer = TfidfVectorizer()
-        X = self.vectorizer.fit_transform(df['review'])
+        X = self.vectorizer.fit_transform(reviews)
+        
         self.encoder = LabelEncoder()
-        y = self.encoder.fit_transform(df['sentiment'])
+        y = self.encoder.fit_transform(sentiments)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
         self.model = MultinomialNB()
-
         self.model.fit(X_train, y_train)
+
         y_pred = self.model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
-        print(accuracy)
     
 
 class MainWidget(Widget):
@@ -206,8 +210,16 @@ class MainWidget(Widget):
         vectorizer = self.naiveBayes.vectorizer
         encoder = self.naiveBayes.encoder
 
+        # try:
+        #     full_df = pd.read_csv(self.full_comments_file)
+        # except Exception as e:
+        #     self.show_error_popup("File Read Error", f"Error reading the file: {e}")
+        #     return
+    
         try:
-            full_df = pd.read_csv(self.full_comments_file)
+            with open(r"C:\JDM\SE\Copy of SSC Events' Evaluation Responses - CSL General Assembly 2024.csv", 'r', encoding='utf-8') as file:
+                reader = csv.DictReader(file)
+                full_df = [row for row in reader]
         except Exception as e:
             self.show_error_popup("File Read Error", f"Error reading the file: {e}")
             return
@@ -268,58 +280,73 @@ class MainWidget(Widget):
         else:
             print("Warning: No data available in structured data.")
 
-        full_df.columns = full_df.columns.str.lower()
         target = None
+        if full_df:
+            for col in ['comment', 'comments', 'review', 'text']:
+                for key in full_df[0].keys():
+                    if col in key.lower():
+                        target = [row[key] for row in full_df]
+                        break
+                if target:
+                    break
 
-        if 'comment' in full_df.columns:
-            target = full_df['comment']
-
-        elif 'comments' in full_df.columns:
-            target = full_df['comments']
-        
-        elif 'review' in full_df.columns:
-            target = full_df['review']
-        
-        elif 'text' in full_df.columns:
-            target = full_df['text']
-
-        if target is None:
-            self.show_error_popup("Missing Column", "The file must contain a 'comment, review, text' column.")
+            if target is None:
+                print("Missing Column: The file must contain a 'comment, review, text' column.")
+                return
+        else:
+            print("Missing Column: The file must contain a 'comment, review, text' column.")
             return
 
-        target = target.fillna('Unknown')
+        # full_df.columns = full_df.columns.str.lower()
+        # target = None
+
+        # if 'comment' in full_df.columns:
+        #     target = full_df['comment']
+
+        # elif 'comments' in full_df.columns:
+        #     target = full_df['comments']
+        
+        # elif 'review' in full_df.columns:
+        #     target = full_df['review']
+        
+        # elif 'text' in full_df.columns:
+        #     target = full_df['text']
+
+        # if target is None:
+        #     self.show_error_popup("Missing Column", "The file must contain a 'comment, review, text' column.")
+        #     return
+
+        # target = target.fillna('Unknown')
         predicted_sentiments = []
-
         for comment in target:
-
             transformed_comment = vectorizer.transform([comment])
             prediction_probabilities = model.predict_proba(transformed_comment)
 
             neutral_prob = prediction_probabilities[0][0] < 0.58 and prediction_probabilities[0][1] < 0.58
-            
+
             if neutral_prob:
                 sentiment = 'Neutral'
             else:
                 prediction = model.predict(transformed_comment)
                 sentiment = encoder.inverse_transform(prediction)[0]
-            
+
             predicted_sentiments.append(sentiment)
-        
-        full_df['Predicted_Sentiment'] = predicted_sentiments
-        positive_comments = full_df[full_df['Predicted_Sentiment'] == 'Positive']
-        negative_comments = full_df[full_df['Predicted_Sentiment'] == 'Negative']
-        neutral_comments = full_df[full_df['Predicted_Sentiment'] == 'Neutral']
+
+        for i, row in enumerate(full_df):
+            row['Predicted_Sentiment'] = predicted_sentiments[i]
+
+        positive_comments = [row for row in full_df if row['Predicted_Sentiment'] == 'Positive']
+        negative_comments = [row for row in full_df if row['Predicted_Sentiment'] == 'Negative']
+        neutral_comments = [row for row in full_df if row['Predicted_Sentiment'] == 'Neutral']
 
         self.positive_len = len(positive_comments)
         self.negative_len = len(negative_comments)
-        self.neutral_len  = len(neutral_comments)
+        self.neutral_len = len(neutral_comments)
 
         total_comments = len(full_df)
         self.positive_percent = (self.positive_len / total_comments) * 100 if total_comments else 0
         self.neutral_percent = (self.neutral_len / total_comments) * 100 if total_comments else 0
         self.negative_percent = (self.negative_len / total_comments) * 100 if total_comments else 0
-
-        
 
         self.redraw_canvas(self.ids.negative_bar, (237 / 255, 106 / 255, 110 / 255), self.negative_percent)
         self.redraw_canvas(self.ids.neutral_bar, (240 / 255, 137 / 255, 44 / 255), self.neutral_percent)
@@ -335,7 +362,7 @@ class MainWidget(Widget):
         self.max_percent = int(percentages[self.max_percent_label])
 
         self.draw_pie_chart([self.negative_percent, self.neutral_percent, self.positive_percent])
-    
+
     def prev_subcategory(self):
         if self.sub_current_index > 0:
             self.sub_current_index -= 1
