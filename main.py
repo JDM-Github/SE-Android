@@ -20,7 +20,7 @@ from kivy.core.window import Window
 # 	Window.top   = 30
 # 	Window.left  = 1
 
-from kivymd.app import App
+# from kivymd.app import App
 from kivy.app import App
 from kivy.uix.widget import Widget
 # from kivy.uix.label import Label
@@ -32,9 +32,7 @@ from kivy.uix.widget import Widget
 # from kivy.animation import Animation
 from kivy.properties import NumericProperty, StringProperty
 from kivy.lang import Builder
-
-# Load the KV file
-Builder.load_file('mainapp.kv')
+Builder.load_file('design.kv')
 
 class MainWidget(Widget):
 
