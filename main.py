@@ -2,6 +2,7 @@ import csv
 import re
 from collections import defaultdict
 
+import joblib
 from kivy.config import Config
 
 WIDTH  = int(750  * 0.5) 
@@ -19,7 +20,6 @@ if platform == "win":
 	Window.top   = 30
 	Window.left  = 1
 
-import threading
 from kivymd.app import MDApp
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
@@ -30,38 +30,6 @@ from kivy.uix.popup import Popup
 from kivymd.uix.filemanager import MDFileManager
 from kivy.animation import Animation
 from kivy.properties import NumericProperty, StringProperty
-
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score
-
-class Model:
-    def __init__(self):
-        reviews = []
-        sentiments = []
-
-        with open('MovieReviewTrainingDatabase.csv', mode='r', newline='', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                reviews.append(row['review'] if row['review'] else 'Unknown')
-                sentiments.append(row['sentiment'])
-
-        self.vectorizer = TfidfVectorizer()
-        X = self.vectorizer.fit_transform(reviews)
-        
-        self.encoder = LabelEncoder()
-        y = self.encoder.fit_transform(sentiments)
-
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
-
-        self.model = MultinomialNB()
-        self.model.fit(X_train, y_train)
-
-        y_pred = self.model.predict(X_test)
-        accuracy = accuracy_score(y_test, y_pred)
-    
 
 class MainWidget(Widget):
 
@@ -91,19 +59,9 @@ class MainWidget(Widget):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.naiveBayes = None
         self.current_index = 0
         self.sub_current_index = 0
-        self.load_model_in_thread()
-    
-    def load_model_in_thread(self):
-        def load_model():
-            self.naiveBayes = Model()
-            print("Model loaded successfully")
 
-        model_thread = threading.Thread(target=load_model)
-        model_thread.start()
-    
     def on_image_click(self):
         self.open_file_manager()
 
@@ -160,7 +118,6 @@ class MainWidget(Widget):
         with open(csv_file, 'r', encoding='utf-8') as file:
             reader = csv.reader(file)
             header = next(reader)  
-
             category_map = self.categorize_columns(header)
 
             for row in reader:
@@ -201,21 +158,14 @@ class MainWidget(Widget):
         return result
 
     def open_csv(self):
-        if not self.naiveBayes or not self.full_comments_file:
-            self.show_error_popup("Invalid Submit", "NaiveBayes model or file is missing.")
+        if not self.full_comments_file:
+            self.show_error_popup("Invalid Submit", "File is missing.")
             print("INVALID SUBMIT")
             return
 
-        model = self.naiveBayes.model
-        vectorizer = self.naiveBayes.vectorizer
-        encoder = self.naiveBayes.encoder
-
-        # try:
-        #     full_df = pd.read_csv(self.full_comments_file)
-        # except Exception as e:
-        #     self.show_error_popup("File Read Error", f"Error reading the file: {e}")
-        #     return
-    
+        model = joblib.load('naive_bayes_model.joblib')
+        vectorizer = joblib.load('tfidf_vectorizer.joblib')
+        encoder = joblib.load('label_encoder.joblib')
         try:
             with open(r"C:\JDM\SE\Copy of SSC Events' Evaluation Responses - CSL General Assembly 2024.csv", 'r', encoding='utf-8') as file:
                 reader = csv.DictReader(file)
@@ -297,26 +247,6 @@ class MainWidget(Widget):
             print("Missing Column: The file must contain a 'comment, review, text' column.")
             return
 
-        # full_df.columns = full_df.columns.str.lower()
-        # target = None
-
-        # if 'comment' in full_df.columns:
-        #     target = full_df['comment']
-
-        # elif 'comments' in full_df.columns:
-        #     target = full_df['comments']
-        
-        # elif 'review' in full_df.columns:
-        #     target = full_df['review']
-        
-        # elif 'text' in full_df.columns:
-        #     target = full_df['text']
-
-        # if target is None:
-        #     self.show_error_popup("Missing Column", "The file must contain a 'comment, review, text' column.")
-        #     return
-
-        # target = target.fillna('Unknown')
         predicted_sentiments = []
         for comment in target:
             transformed_comment = vectorizer.transform([comment])
