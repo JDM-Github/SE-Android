@@ -20,14 +20,15 @@ if platform == "win":
 	Window.top   = 30
 	Window.left  = 1
 
-from kivymd.app import MDApp
+from kivymd.app import App
+from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.graphics import Color, Ellipse, RoundedRectangle
-from kivy.clock import Clock
+# from kivy.clock import Clock
 from kivy.uix.popup import Popup
-from kivymd.uix.filemanager import MDFileManager
+# from kivymd.uix.filemanager import MDFileManager
 from kivy.animation import Animation
 from kivy.properties import NumericProperty, StringProperty
 
@@ -66,22 +67,23 @@ class MainWidget(Widget):
         self.open_file_manager()
 
     def open_file_manager(self):
-        self.file_manager = MDFileManager(
-            exit_manager=self.exit_file_manager,
-            select_path=self.select_file,
-        )
-        self.file_manager.show('/')
+        # self.file_manager = MDFileManager(
+        #     exit_manager=self.exit_file_manager,
+        #     select_path=self.select_file,
+        # )
+        # self.file_manager.show('/')
+        pass
 
-    def select_file(self, path):
-        if path.endswith('.csv'):
-            self.full_comments_file = path
-            print(f"File selected: {path}")
-        else:
-            self.show_error_popup("Invalid file type", "Please select a CSV file.")
-        self.file_manager.close()
+    # def select_file(self, path):
+    #     if path.endswith('.csv'):
+    #         self.full_comments_file = path
+    #         print(f"File selected: {path}")
+    #     else:
+    #         self.show_error_popup("Invalid file type", "Please select a CSV file.")
+    #     self.file_manager.close()
 
-    def exit_file_manager(self, *args):
-        self.file_manager.close()
+    # def exit_file_manager(self, *args):
+    #     self.file_manager.close()
     
     
     def simplify_text(self, text):
@@ -455,7 +457,7 @@ class MainWidget(Widget):
         self.popup.dismiss()
 
 
-class MainApp(MDApp):
+class MainApp(App):
 
     def build(self):
         Window.bind(on_drop_file=self._on_file_drop)
