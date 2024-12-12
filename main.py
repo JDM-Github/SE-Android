@@ -2,7 +2,7 @@ import csv
 import re
 from collections import defaultdict
 
-import joblib
+# import joblib
 from kivy.config import Config
 
 WIDTH  = int(750  * 0.5) 
@@ -163,9 +163,12 @@ class MainWidget(Widget):
             print("INVALID SUBMIT")
             return
 
-        model = joblib.load('naive_bayes_model.joblib')
-        vectorizer = joblib.load('tfidf_vectorizer.joblib')
-        encoder = joblib.load('label_encoder.joblib')
+        # model = joblib.load('naive_bayes_model.joblib')
+        # vectorizer = joblib.load('tfidf_vectorizer.joblib')
+        # encoder = joblib.load('label_encoder.joblib')
+        model = None
+        vectorizer = None
+        encoder = None
         try:
             with open(r"C:\JDM\SE\Copy of SSC Events' Evaluation Responses - CSL General Assembly 2024.csv", 'r', encoding='utf-8') as file:
                 reader = csv.DictReader(file)
