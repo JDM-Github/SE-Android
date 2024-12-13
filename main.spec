@@ -9,7 +9,7 @@ a = Analysis(
         ('mainapp.kv', '.'),  
         ('Assets/*', 'Assets'),
     ],
-    hiddenimports=[],
+    hiddenimports=['sklearn'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
