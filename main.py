@@ -2,7 +2,7 @@ import csv
 import re
 from collections import defaultdict
 
-# import joblib
+import joblib
 from kivy.config import Config
 
 WIDTH  = int(750  * 0.5) 
@@ -75,13 +75,13 @@ class MainWidget(Widget):
         self.current_index = 0
         self.sub_current_index = 0
 
-        # self.model = joblib.load('naive_bayes_model.joblib')
-        # self.vectorizer = joblib.load('tfidf_vectorizer.joblib')
-        # self.encoder = joblib.load('label_encoder.joblib')
+        self.model = joblib.load('naive_bayes_model.joblib')
+        self.vectorizer = joblib.load('tfidf_vectorizer.joblib')
+        self.encoder = joblib.load('label_encoder.joblib')
 
-        self.model = None
-        self.vectorizer = None
-        self.encoder = None
+        # self.model = None
+        # self.vectorizer = None
+        # self.encoder = None
 
     def on_image_click(self):
         self.open_file_manager()
