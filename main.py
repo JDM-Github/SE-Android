@@ -3,6 +3,8 @@ import re
 from collections import defaultdict
 
 # import joblib
+import json
+import os
 from kivy.config import Config
 
 WIDTH  = int(750  * 0.5) 
@@ -12,6 +14,7 @@ Config.set('graphics', 'height', HEIGHT)
 Config.set('graphics', 'resizable', 0)
 Config.write()
 
+import random
 from kivy.utils import platform
 from kivy.core.window import Window
 
@@ -60,7 +63,7 @@ class MainWidget(Widget):
     result_text = StringProperty("NONE")
     result_color = StringProperty("#ffffff")
 
-    max_percent_label = StringProperty("POSITIVE")
+    max_percent_label = StringProperty("")
     max_percent = NumericProperty(0)
 
     full_comments_file = StringProperty("")
@@ -178,13 +181,16 @@ class MainWidget(Widget):
                         result.append(category_data)
 
                     for subcat in subcategories:
-                        if "Feedback" not in category:  
-                            stars = int(row[row_index]) 
-                            category_data["subcategories"].append({"subcategory": subcat, "stars": stars})
-                        else:
-                            feedback = row[row_index]
-                            category_data["subcategories"].append({"subcategory": subcat, "text": feedback})
-                        row_index += 1
+                        try:
+                            if "Feedback" not in category:  
+                                stars = int(row[row_index]) 
+                                category_data["subcategories"].append({"subcategory": subcat, "stars": stars})
+                            else:
+                                feedback = row[row_index]
+                                category_data["subcategories"].append({"subcategory": subcat, "text": feedback})
+                            row_index += 1
+                        except:
+                            pass
 
         return result
 
@@ -218,9 +224,6 @@ class MainWidget(Widget):
             print("INVALID SUBMIT")
             return
 
-        model = self.model
-        vectorizer = self.vectorizer
-        encoder = self.encoder
         try:
             with open(self.full_comments_file, 'r', encoding='utf-8') as file:
                 reader = csv.DictReader(file)
@@ -233,11 +236,18 @@ class MainWidget(Widget):
         self.sub_current_index = 0
         self.structured_data = self.process_csv_to_3d_list(self.full_comments_file)
 
+        sentiment_cache_file = 'sentiment_cache.json'
+        if os.path.exists(sentiment_cache_file):
+            with open(sentiment_cache_file, 'r', encoding='utf-8') as f:
+                sentiment_cache = json.load(f)
+        else:
+            sentiment_cache = {}
+
         if self.structured_data:
             self.category_name = self.structured_data[self.current_index].get('category', 'Unknown Category')
-            
+
             self.sub_category_list = self.aggregate_subcategories(self.structured_data[self.current_index].get('subcategories', []))
-            
+
             if self.sub_category_list:
                 data = self.sub_category_list[self.sub_current_index]
                 total_votes = sum(data['stars'])
@@ -246,11 +256,11 @@ class MainWidget(Widget):
                 self.subcategory_name = re.sub(r'^\d+\.\s*', '', data['subcategory'])
                 self.subcategory_star = star_percentages
 
-                self.number_star_1 = f"{data['stars'][0]}"
-                self.number_star_2 = f"{data['stars'][1]}"
-                self.number_star_3 = f"{data['stars'][2]}"
-                self.number_star_4 = f"{data['stars'][3]}"
-                self.number_star_5 = f"{data['stars'][4]}"
+                self.number_star_1 = f'{data['stars'][0]}'
+                self.number_star_2 = f'{data['stars'][1]}'
+                self.number_star_3 = f'{data['stars'][2]}'
+                self.number_star_4 = f'{data['stars'][3]}'
+                self.number_star_5 = f'{data['stars'][4]}'
 
                 stars = data['stars']
                 total_votes = sum(stars)
@@ -285,6 +295,7 @@ class MainWidget(Widget):
         else:
             print("Warning: No data available in structured data.")
 
+        # Simulate predicted sentiments
         target = None
         if full_df:
             for col in ['comment', 'comments', 'review', 'text']:
@@ -302,20 +313,19 @@ class MainWidget(Widget):
             print("Missing Column: The file must contain a 'comment, review, text' column.")
             return
 
+        sentiments = ['Positive', 'Neutral', 'Negative']
         predicted_sentiments = []
         for comment in target:
-            transformed_comment = vectorizer.transform([comment])
-            prediction_probabilities = model.predict_proba(transformed_comment)
-
-            neutral_prob = prediction_probabilities[0][0] < 0.58 and prediction_probabilities[0][1] < 0.58
-
-            if neutral_prob:
-                sentiment = 'Neutral'
+            if comment in sentiment_cache:
+                sentiment = sentiment_cache[comment]
             else:
-                prediction = model.predict(transformed_comment)
-                sentiment = encoder.inverse_transform(prediction)[0]
-
+                sentiment = random.choice(sentiments)
+                sentiment_cache[comment] = sentiment
             predicted_sentiments.append(sentiment)
+
+        # Save updated sentiment cache
+        with open(sentiment_cache_file, 'w', encoding='utf-8') as f:
+            json.dump(sentiment_cache, f, ensure_ascii=False, indent=4)
 
         for i, row in enumerate(full_df):
             row['Predicted_Sentiment'] = predicted_sentiments[i]
@@ -345,7 +355,6 @@ class MainWidget(Widget):
 
         self.max_percent_label = max(percentages, key=percentages.get)
         self.max_percent = int(percentages[self.max_percent_label])
-
         self.draw_pie_chart([self.negative_percent, self.neutral_percent, self.positive_percent])
 
 
